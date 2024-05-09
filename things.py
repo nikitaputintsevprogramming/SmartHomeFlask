@@ -26,7 +26,7 @@ class Device(Thing):
     def print_name(self):
         super().print_name()
 
-class SensorSim(Sensor):
+class SensorSimulator(Sensor):
     def valueUp(self, *sensors):
         for sensor in sensors:
             sensor.value += 1

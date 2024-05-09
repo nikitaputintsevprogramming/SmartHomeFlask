@@ -1,7 +1,14 @@
-function send_data() {
+function get_graph() {
     $.ajax({
         type: 'GET', //тип запроса
-        url: '/connect', // адрес, на который отправлен запрос
+        url: '/GraphSensors',
+    });
+}
+
+function set_values() {
+    $.ajax({
+        type: 'GET', //тип запроса
+        url: '/SetValues', // адрес, на который отправлен запрос
         dataType: 'json', //тип данных, ожидаемый от сервера
         conectType:'application/json', //тип передаваемых данных
         data:{ //данные запроса
@@ -12,5 +19,6 @@ function send_data() {
         success: function (response) {
             console.log(response)
         }
+        
     });
 }
