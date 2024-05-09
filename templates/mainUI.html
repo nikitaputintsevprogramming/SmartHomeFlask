@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart home emulator</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css">
+    <script src="http://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="../static/js/scripts.js"></script>
+
+</head>
+<body>
+    <div class="container">
+      <h1>Smart home emulator by Раненый солджа</h1>
+      <div class="text-field">
+        <label class="text-field__label" for="name">Name sensor</label>
+        <input class="text-field__input" type="text" id="name" placeholder='К примеру "Wet"'>
+      </div>
+
+      <div class="text-field">
+        <label class="text-field__label" for="name">Value</label>
+        <input class="text-field__input" type="text" id="value" placeholder='К примеру "34"'>
+      </div>
+
+      <div class="switch-field">
+        <label class="text-field__label" for="name">Light in bedroom</label>
+        <label class="switch">
+            <input type="checkbox" id="check">
+            <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="send_button">
+        <button class="custom-btn btn-3" onclick="send_data()"><span>Send data</span></button>
+      </div>
+    </div>
+</body>
+</html>

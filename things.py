@@ -22,7 +22,7 @@ class Sensor(Thing):
         super().print_name()
 
 
-class Humidifier(Thing):
+class Humidifier(Sensor):
     def __init__(self, name, focus_wet):
         super().__init__(name)
         self.focus_wet = focus_wet

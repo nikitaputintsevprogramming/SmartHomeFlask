@@ -7,46 +7,42 @@ from threading import Timer
 import things
 import logger
 import re
+from array import *
 
 logger = logger.Logger('HomeInformation')
 
 app = Flask(__name__)
 
-# sensors = [] 
-# sensors[0] = "hhelo"
-# print(sensors[0])
+# ------------------ Создание сенсоров (датчики температуры) ------------------
+array_name = []
+sensorsTemp = []
 
-sensor_1 = things.Sensor('wet_1')
-sensor_2 = things.Sensor('wet_2')
-sensor_3 = things.Sensor('wet_3')
-sensor_4 = things.Sensor('wet_4')
-sensor_5 = things.Sensor('wet_5')
-sensor_6 = things.Sensor('wet_6')
-sensor_7 = things.Sensor('wet_7')
-sensor_8 = things.Sensor('wet_8')
-sensor_9 = things.Sensor('wet_9')
+for count in range(9):
+    array_name.append("wet_"+ str(count))
+    sensorsTemp.append(things.Sensor(array_name[count]))
 
-# for count in range 
+sensorsTempBedroom = (sensorsTemp[5], sensorsTemp[6], sensorsTemp[7], sensorsTemp[8])
+humidifier = things.Humidifier('Main_humidifier', 35)
 
-sensors1 = (sensor_5, sensor_6, sensor_7, sensor_8, sensor_9)
-humidifier = things.Humidifier('Main_humidifier', 25)
+sensorsTempBathroom = (sensorsTemp[0], sensorsTemp[1], sensorsTemp[2], sensorsTemp[3], sensorsTemp[4])
+humidifier_2 = things.Humidifier('Bedroom_humidifier', 35)
+# ------------------ ------------------ ------------------ ------------------
 
-sensors2 = (sensor_1, sensor_2, sensor_3, sensor_4)
-humidifier_2 = things.Humidifier('Bedroom_humidifier', 25)
-
+# Log
 def log_wet():
-    logger.insert_wet('DateOfComfort', sensor_1, sensor_2, sensor_3,
-                              sensor_4, sensor_5, sensor_6,
-                              sensor_7, sensor_8, sensor_9)
-    Timer(5, log_wet).start()
+    # for count in range(len(sensorsTemp)):
+    logger.insert_wet('DateOfComfort', sensorsTemp[0], sensorsTemp[1], sensorsTemp[2], sensorsTemp[3], sensorsTemp[4], sensorsTemp[5], sensorsTemp[6], sensorsTemp[7], sensorsTemp[8])
+    Timer(1, log_wet).start()
 
 log_wet()
 
-@app.route('/connect_interface')
+# Разворачиваем интерфейс
+@app.route('/mainUI')
 def connect_interface():
-    return render_template('connect_interface.html')
+    return render_template('mainUI.html')
+# ----------------------
 
-
+# Выводим график изменений после послания рез-ов
 @app.route('/connect')
 def connect():
     cursor = logger.read_data('DateOfComfort')
@@ -63,7 +59,7 @@ def connect():
 
     plt.plot(x, y)
     plt.xticks(rotation=90)
-    plt.ylim(0, 30)
+    plt.ylim(0, 50)
 
     # model = LinearRegression().fit(x, y)
     # x = np.arange(len(time), len(time) * 2).reshape((-1, 1))
@@ -74,31 +70,33 @@ def connect():
     # plt.show()
 
     x = np.arange(len(time), len(time)*2)
-    y_pred = np.poly1d(np.polyfit(x, y, 30))
+    y_pred = np.poly1d(np.polyfit(x, y, 50))
 
     plt.plot(x, y_pred(x))
     plt.xticks(rotation=90)
-    plt.ylim(0, 30)
+    plt.ylim(0, 50)
     plt.show()
     return {}
+# ------------------------------
 
-
-@app.route('/')
+# Simulation
+@app.route('/upTempBath')
 def start_page():
-    humidifier.humidify(*sensors1)
+    humidifier.humidify(*sensorsTempBedroom)
     result = {}
-    for sensor in sensors1:
+    for sensor in sensorsTempBedroom:
         result[sensor.name] = sensor.value
     return result
 
 
-@app.route('/bedroom')
+@app.route('/upTempBed')
 def bedroom_page():
-    humidifier_2.humidify(*sensors2)
+    humidifier_2.humidify(*sensorsTempBathroom)
     result = {}
-    for sensor in sensors2:
+    for sensor in sensorsTempBathroom:
         result[sensor.name] = sensor.value
     return result
+# -------------------
 
 
 if __name__ == '__main__':

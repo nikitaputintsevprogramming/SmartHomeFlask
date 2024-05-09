@@ -8,10 +8,9 @@ class Logger:
         self.db = self.client[db_name]
 
     def insert_wet(self, nameDB, *sensors):
-        result = {'timeStamp': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+        result = {'time of read': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
         for sensor in sensors:
             result[sensor.name] = sensor.value
-
         return self.db[nameDB].insert_one(result)
 
     def read_data(self, nameDB, value={}, field={}):
