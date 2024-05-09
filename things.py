@@ -1,6 +1,5 @@
 import abc
 
-
 class Thing(abc.ABC):
     @abc.abstractmethod
     def __init__(self, name):
@@ -11,28 +10,28 @@ class Thing(abc.ABC):
     def print_name(self):
         print(f'name this device is {self.name}')
 
-
 class Sensor(Thing):
     def __init__(self, name):
         super().__init__(name)
         self.value = 20
-        print(f"Create new device {self.name}")
 
     def print_name(self):
         super().print_name()
 
-
-class Humidifier(Sensor):
-    def __init__(self, name, focus_wet):
+class Device(Thing):
+    def __init__(self, name, setValue):
         super().__init__(name)
-        self.focus_wet = focus_wet
+        self.value_const = setValue
 
     def print_name(self):
         super().print_name()
 
-    def humidify(self, *sensors):
+class SensorSim(Sensor):
+    def valueUp(self, *sensors):
         for sensor in sensors:
-            if sensor.value < self.focus_wet:
-                sensor.value += 1
-            else:
-                sensor.value -= 1
+            sensor.value += 1
+            print(f"Change value up of sensor: {self.name}, on {sensor.value}")
+    def valueDown(self, *sensors):
+        for sensor in sensors:
+            sensor.value -= 1
+            print(f"Change value down of sensor: {self.name}, on {sensor.value}")

@@ -15,29 +15,30 @@ app = Flask(__name__)
 
 # ------------------ Создание сенсоров (датчики температуры) ------------------
 array_name = []
-sensorsTemp = []
+sensors = []
 
-for count in range(9):
+for count in range(12):
     array_name.append("wet_"+ str(count))
-    sensorsTemp.append(things.Sensor(array_name[count]))
+    sensors.append(things.Sensor(array_name[count]))
 
-sensorsTempBedroom = (sensorsTemp[5], sensorsTemp[6], sensorsTemp[7], sensorsTemp[8])
-humidifier = things.Humidifier('Main_humidifier', 35)
+sensorsWet = (sensors[0], sensors[1], sensors[2], sensors[3])
+sensorsTemp = (sensors[4], sensors[5], sensors[6], sensors[7])
+sensorsSmoke = (sensors[8])
 
-sensorsTempBathroom = (sensorsTemp[0], sensorsTemp[1], sensorsTemp[2], sensorsTemp[3], sensorsTemp[4])
-humidifier_2 = things.Humidifier('Bedroom_humidifier', 35)
+MusicPlayer = things.Device('Music player', 35)
+LightValue = things.Device('Light value', 35)
 # ------------------ ------------------ ------------------ ------------------
 
 # Log
-def log_wet():
+def log_data():
     # for count in range(len(sensorsTemp)):
-    logger.insert_wet('DateOfComfort', sensorsTemp[0], sensorsTemp[1], sensorsTemp[2], sensorsTemp[3], sensorsTemp[4], sensorsTemp[5], sensorsTemp[6], sensorsTemp[7], sensorsTemp[8])
-    Timer(1, log_wet).start()
+    logger.insert_data('DateOfComfort', sensorsWet[0], sensorsWet[1], sensorsWet[2], sensorsWet[3])
+    Timer(1, log_data).start()
 
-log_wet()
+log_data()
 
 # Разворачиваем интерфейс
-@app.route('/mainUI')
+@app.route('/')
 def connect_interface():
     return render_template('mainUI.html')
 # ----------------------
@@ -50,8 +51,12 @@ def connect():
     time = []
     avg_wet = []
     for item in cursor:
-        time.append(item['timeStamp'])
-        avg_wet.append(np.average(list(item.values())[2:]))
+        if 'timeOfRead' in item:
+            time.append(item['timeOfRead'])
+            avg_wet.append(np.average(list(item.values())[2:]))
+        else:
+            print("Ключ 'timeOfRead' отсутствует в документе:", item)
+            return {}
 
     # x = np.arange(0, len(time)).reshape((-1, 1))
     x = np.arange(0, len(time))
@@ -80,20 +85,20 @@ def connect():
 # ------------------------------
 
 # Simulation
-@app.route('/upTempBath')
-def start_page():
-    humidifier.humidify(*sensorsTempBedroom)
+@app.route('/up')
+def upSensorValue():
+    things.SensorSim.valueUp(*sensors)
     result = {}
-    for sensor in sensorsTempBedroom:
+    for sensor in sensors:
         result[sensor.name] = sensor.value
     return result
 
 
-@app.route('/upTempBed')
-def bedroom_page():
-    humidifier_2.humidify(*sensorsTempBathroom)
+@app.route('/down')
+def downSensorValue():
+    things.SensorSim.valueDown(*sensors)
     result = {}
-    for sensor in sensorsTempBathroom:
+    for sensor in sensors:
         result[sensor.name] = sensor.value
     return result
 # -------------------

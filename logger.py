@@ -7,8 +7,8 @@ class Logger:
         self.client = pymongo.MongoClient('mongodb://localhost:27017/')
         self.db = self.client[db_name]
 
-    def insert_wet(self, nameDB, *sensors):
-        result = {'time of read': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    def insert_data(self, nameDB, *sensors):
+        result = {'timeOfRead': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
         for sensor in sensors:
             result[sensor.name] = sensor.value
         return self.db[nameDB].insert_one(result)
