@@ -8,34 +8,37 @@ import things
 import logger
 import re
 from array import *
+from things import sensors, devices
 
 logger = logger.Logger('HomeInformation')
 
 app = Flask(__name__)
 
 # ------------------ Создание сенсоров и устройств (экзмепляров) ------------------
-array_name = []
-sensors = []
 
+array_name_sensors = []
 for count in range(12):
-    array_name.append("sensor_"+ str(count))
-    sensors.append(things.Sensor(array_name[count]))
+    array_name_sensors.append("sensor_"+ str(count))
+    sensors.append(things.Sensor(array_name_sensors[count]))
 
 sensorsWet = (sensors[0], sensors[1], sensors[2], sensors[3])
 sensorsTemp = (sensors[4], sensors[5], sensors[6], sensors[7])
 sensorsSmoke = (sensors[8])
 
-MusicPlayer = things.Device('Music player', False)
-LightValue = things.Device('Light value', False)
+MusicPlayer = things.Device('MusicPlayer', False)
+LightValue = things.Device('LightValue', False)
 # ------------------ ------------------ ------------------ ------------------
 
 # ------------------ Log постоянный ------------------
 def log_sensorsData():
-    logger.insert_data('DateOfComfort', sensors)
+    logger.insert_data_sensors('DateOfSensors', sensors)
     Timer(10, log_sensorsData).start()
 
 log_sensorsData()
 
+def log_devicesData():
+    logger.insert_data_sensors('DateOfDevices', devices)
+    # Timer(10, log_sensorsData).start()
 # ------------------Разворачиваем интерфейс ------------------
 @app.route('/')
 def connect_interface():
@@ -44,14 +47,19 @@ def connect_interface():
 
 @app.route('/SetValues')
 def set_values():
-    print(f' Название: { request.args.get("name")}, Значение: {request.args.get("value")} ' )
+    print(f'Название: { request.args.get("name")}, Значение: {request.args.get("value")}')
+    for device in devices:
+        if(device.name == request.args.get("name")):
+            device.value = request.args.get("value")
+            log_devicesData()
+    LightValue.value = request.args.get("check")
+    print(request.args.get("check"))
     return json.dumps({'Название:': request.args.get('name'), 'Значение:': request.args.get('value')})
-    # log_data()
 
 # ------------------ Выводим график изменений ------------------
 @app.route('/GraphSensors')
 def connect():
-    cursor = logger.read_data('DateOfComfort')
+    cursor = logger.read_data('DateOfSensors')
     print(cursor)
     time = []
     avg_wet = []

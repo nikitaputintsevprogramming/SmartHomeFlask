@@ -15,10 +15,7 @@ function set_values() {
             "value": document.getElementById("value").value,
             "name": document.getElementById("name").value,
             "check": Number(document.getElementById("check").checked)
-        },
-        success: function (response) {
-            console.log(response)
-        }
-        
+            
+        },        
     });
 }

@@ -1,5 +1,8 @@
 import abc
 
+sensors = []
+devices = []
+
 class Thing(abc.ABC):
     @abc.abstractmethod
     def __init__(self, name):
@@ -21,7 +24,9 @@ class Sensor(Thing):
 class Device(Thing):
     def __init__(self, name, setValue):
         super().__init__(name)
-        self.value_const = setValue
+        self.value = setValue
+        devices.append(self)
+        print(f' доабвлено устройство {name} со значением {setValue}')
 
     def print_name(self):
         super().print_name()
