@@ -36,5 +36,3 @@ class Humidifier(Thing):
                 sensor.value += 1
             else:
                 sensor.value -= 1
-
-

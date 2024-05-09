@@ -1,15 +1,20 @@
 from flask import Flask, render_template, request
-from threading import Timer
-import things
-import logger
-import re
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
-logger = logger.Logger('IOT_Log')
+from threading import Timer
+import things
+import logger
+import re
+
+logger = logger.Logger('HomeInformation')
 
 app = Flask(__name__)
+
+# sensors = [] 
+# sensors[0] = "hhelo"
+# print(sensors[0])
 
 sensor_1 = things.Sensor('wet_1')
 sensor_2 = things.Sensor('wet_2')
@@ -30,7 +35,7 @@ sensors2 = (sensor_1, sensor_2, sensor_3, sensor_4)
 humidifier_2 = things.Humidifier('Bedroom_humidifier', 25)
 
 def log_wet():
-    logger.insert_wet(sensor_1, sensor_2, sensor_3,
+    logger.insert_wet('DateOfComfort', sensor_1, sensor_2, sensor_3,
                               sensor_4, sensor_5, sensor_6,
                               sensor_7, sensor_8, sensor_9)
     Timer(5, log_wet).start()
@@ -44,7 +49,7 @@ def connect_interface():
 
 @app.route('/connect')
 def connect():
-    cursor = logger.read_data('wet')
+    cursor = logger.read_data('DateOfComfort')
     print(cursor)
     time = []
     avg_wet = []
@@ -67,7 +72,6 @@ def connect():
     # plt.xticks(rotation=90)
     # plt.ylim(0, 30)
     # plt.show()
-
 
     x = np.arange(len(time), len(time)*2)
     y_pred = np.poly1d(np.polyfit(x, y, 30))
