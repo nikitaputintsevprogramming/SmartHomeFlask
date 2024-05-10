@@ -61,28 +61,46 @@ def set_values():
     return json.dumps({'Название:': request.args.get('name'), 'Значение:': request.args.get('value')})
 
 @app.route('/GraphSensors')
-def connect():
-    cursor = logger.read_data('DateOfSensors')
+def read_data_sensors():
+    connect('DateOfSensors')
+
+@app.route('/GraphDevices')
+def read_data_devices():
+    connect('DateOfDevices')
+
+def connect(name_bd):
+    # Получаем имя датчика из запроса
+    sensor_name = request.args.get("name")
+    print(f'Считываем значение с датчика: {sensor_name}')
+
+    if sensor_name is None:
+        print("Имя датчика не передано в запросе.")
+        return {}
+
+    # Получаем данные из коллекции БД
+    cursor = logger.read_data(name_bd)
+
     time = []
-    average_value = []
+    sensor_values = []
+
     for item in cursor:
-        if 'timeOfRead' in item:
+        if 'timeOfRead' in item and sensor_name in item:
             time_str = item['timeOfRead']
             time.append(dt.strptime(time_str, '%Y-%m-%d %H:%M:%S').time())
-            average_value.append(np.average(list(item.values())[2:]))
+            sensor_values.append(item[sensor_name])
         else:
-            print("Ключ 'timeOfRead' отсутствует в документе:", item)
+            print(f"Ключ 'timeOfRead' или датчик '{sensor_name}' отсутствует в документе:", item)
             return {}
 
     x = np.array([t.hour + t.minute / 60 for t in time])
-    y = np.array(average_value)
+    y = np.array(sensor_values)
 
     plt.plot(x, y)
     plt.xticks(rotation=90)
     plt.ylim(0, 50)
     plt.xlabel('Время дня')
     plt.ylabel('Значение')
-    
+
     current_time = dt.now().time()
     plt.axvline(x=current_time.hour + current_time.minute / 60, color='r', linestyle='--', label='Текущее время')
 
@@ -91,7 +109,7 @@ def connect():
 
     plt.legend()
     plt.show()
-    
+
     return {}
 
 @app.route('/up')
