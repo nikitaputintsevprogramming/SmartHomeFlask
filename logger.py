@@ -5,6 +5,12 @@ import matplotlib.pyplot as plt
 from flask import request
 from datetime import datetime as dt
 
+import pymongo
+import datetime
+import numpy as np
+import matplotlib.pyplot as plt
+from datetime import datetime as dt
+from flask import request
 
 class Logger:
     def __init__(self, db_name):
@@ -20,11 +26,12 @@ class Logger:
     def read_data(self, nameDB, value={}, field={}):
         return self.db[nameDB].find(value, field)
 
-class LoggerGraph:
-    def showGraph(name_collection, name_bd):
-        logger = Logger(name_bd)
+class LoggerGraph(Logger):
+    def __init__(self, db_name):
+        super().__init__(db_name)
+        print(f'Инициализация БД: {db_name}')
 
-        # Получаем имя датчика из запроса
+    def showGraph(self, name_collection):
         device_name = request.args.get("name")
         print(f'Считываем значение с датчика: {device_name}')
 
@@ -32,9 +39,7 @@ class LoggerGraph:
             print("Имя датчика не передано в запросе.")
             return {}
 
-        # Получаем данные из коллекции БД
-        cursor = logger.read_data(name_collection)
-
+        cursor = self.read_data(name_collection)
         time = []
         device_values = []
 
@@ -42,11 +47,24 @@ class LoggerGraph:
             if 'timeOfRead' in item and device_name in item:
                 time_str = item['timeOfRead']
                 time.append(dt.strptime(time_str, '%Y-%m-%d %H:%M:%S').time())
-                device_values.append(item[device_name])
+                # device_values.append(item[device_name])
+                value = item[device_name]
+                if isinstance(value, (int, float)):
+                    device_values.append(value)
+                else:
+                    print(f"Значение '{value}' не является числом, пропускаем.")
             else:
                 print(f"Ключ 'timeOfRead' или датчик '{device_name}' отсутствует в документе:", item)
                 return {}
-
+        if not device_values:
+            print("Нет числовых значений для построения графика.")
+            return {}
+        # print(f"до сортировки '{device_values}' ")
+        # Выстраиваем числа по порядку от наим. к наиб.
+        sorted_data = sorted(zip(time, device_values), key=lambda x: x[0])
+        time, device_values = zip(*sorted_data)
+        # print(f"после сортировки '{device_values}' ")
+        print(f"Ключ 'timeOfRead' или датчик '{device_name}' отсутствует в документе:", item)
         x = np.array([t.hour + t.minute / 60 for t in time])
         y = np.array(device_values)
 

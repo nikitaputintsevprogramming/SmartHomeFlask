@@ -10,7 +10,6 @@ import re
 from array import *
 from things import sensors, devices
 
-from logger import Logger as logger
 from logger import LoggerGraph as lg
 
 app = Flask(__name__)
@@ -24,7 +23,7 @@ sensorsWet = (sensors[0], sensors[1], sensors[2], sensors[3])
 sensorsTemp = (sensors[4], sensors[5], sensors[6], sensors[7])
 sensorsSmoke = (sensors[8])
 
-MusicPlayer = things.Device('MusicPlayer', False)
+MusicPlayer = things.Device('MusicPlayer', 0)
 LightValue = things.Device('LightValue', False)
 
 KitchenMusicPlayer = things.Device('KitchenMusicPlayer', False)
@@ -37,7 +36,7 @@ BedroomLightValue = things.Device('BedroomLightValue', False)
 HollLightValue = things.Device('HollLightValue', False)
 BathroomLightValue = things.Device('BathroomLightValue', False)
 
-logger_instance = logger('HomeInformation')
+logger_instance = lg('HomeInformation')
 
 def log_sensorsData():
     logger_instance.insert_data_sensors('DateOfSensors', sensors)
@@ -53,18 +52,24 @@ def set_values():
     print(f'Название: { request.args.get("name")}, Значение: {request.args.get("value")}')
     for device in devices:
         if(device.name == request.args.get("name")):
-            device.value = request.args.get("value")
+            value = request.args.get("value")
+            if value.isdigit():
+                device.value = int(value)
+            else:
+                device.value = request.args.get("value")
             logger_instance.insert_data_sensors('DateOfDevices', devices)
     LightValue.value = request.args.get("check")
     return json.dumps({'Название:': request.args.get('name'), 'Значение:': request.args.get('value')})
 
 @app.route('/GraphSensors')
 def read_data_sensors():
-    lg.showGraph('DateOfSensors', 'HomeInformation')
+    logger_instance.showGraph('DateOfSensors')
+    print("GraphSensors")
 
 @app.route('/GraphDevices')
 def read_data_devices():
-    lg.showGraph('DateOfDevices', 'HomeInformation')
+    logger_instance.showGraph('DateOfDevices')
+    print("GraphDevices")
 
 @app.route('/up')
 def upSensorValue():
