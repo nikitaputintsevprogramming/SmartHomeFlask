@@ -9,6 +9,7 @@ class Logger:
 
     def insert_data_sensors(self, nameDB, sensorsArray):
         result = {'timeOfRead': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+        print(result)
         for sensor in sensorsArray:
             result[sensor.name] = sensor.value
         return self.db[nameDB].insert_one(result)

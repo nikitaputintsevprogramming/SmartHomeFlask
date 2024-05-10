@@ -14,8 +14,6 @@ logger = logger.Logger('HomeInformation')
 
 app = Flask(__name__)
 
-# ------------------ Создание сенсоров и устройств (экзмепляров) ------------------
-
 array_name_sensors = []
 for count in range(12):
     array_name_sensors.append("sensor_"+ str(count))
@@ -27,23 +25,30 @@ sensorsSmoke = (sensors[8])
 
 MusicPlayer = things.Device('MusicPlayer', False)
 LightValue = things.Device('LightValue', False)
-# ------------------ ------------------ ------------------ ------------------
 
-# ------------------ Log постоянный ------------------
+KitchenMusicPlayer = things.Device('KitchenMusicPlayer', False)
+BedroomMusicPlayer = things.Device('BedroomMusicPlayer', False)
+HollMusicPlayer = things.Device('HollMusicPlayer', False)
+BathroomMusicPlayer = things.Device('BathroomMusicPlayer', False)
+
+KitchenLightValue = things.Device('KitchenLightValue', False)
+BedroomLightValue = things.Device('BedroomLightValue', False)
+HollLightValue = things.Device('HollLightValue', False)
+BathroomLightValue = things.Device('BathroomLightValue', False)
+
 def log_sensorsData():
     logger.insert_data_sensors('DateOfSensors', sensors)
     Timer(10, log_sensorsData).start()
 
-log_sensorsData()
+# log_sensorsData()
 
 def log_devicesData():
+    print("log_devicesData")
     logger.insert_data_sensors('DateOfDevices', devices)
-    # Timer(10, log_sensorsData).start()
-# ------------------Разворачиваем интерфейс ------------------
+   
 @app.route('/')
 def connect_interface():
     return render_template('mainUI.html')
-# ----------------------
 
 @app.route('/SetValues')
 def set_values():
@@ -56,7 +61,6 @@ def set_values():
     print(request.args.get("check"))
     return json.dumps({'Название:': request.args.get('name'), 'Значение:': request.args.get('value')})
 
-# ------------------ Выводим график изменений ------------------
 @app.route('/GraphSensors')
 def connect():
     cursor = logger.read_data('DateOfSensors')
@@ -86,9 +90,7 @@ def connect():
     plt.ylim(0, 50)
     plt.show()
     return {}
-# ------------------------------
 
-# ------------------ Simulation ------------------
 @app.route('/up')
 def upSensorValue():
     things.SensorSimulator.valueUp(*sensors)
@@ -104,7 +106,6 @@ def downSensorValue():
     for sensor in sensors:
         result[sensor.name] = sensor.value
     return result
-# -------------------
 
 if __name__ == '__main__':
     app.run()
