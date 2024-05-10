@@ -2,16 +2,16 @@ from flask import Flask, render_template, request, json
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
-from datetime import datetime as dt
 
 from threading import Timer
 import things
-import logger
+
 import re
 from array import *
 from things import sensors, devices
 
-logger = logger.Logger('HomeInformation')
+from logger import Logger as logger
+from logger import LoggerGraph as lg
 
 app = Flask(__name__)
 
@@ -37,14 +37,12 @@ BedroomLightValue = things.Device('BedroomLightValue', False)
 HollLightValue = things.Device('HollLightValue', False)
 BathroomLightValue = things.Device('BathroomLightValue', False)
 
+logger_instance = logger('HomeInformation')
+
 def log_sensorsData():
-    logger.insert_data_sensors('DateOfSensors', sensors)
+    logger_instance.insert_data_sensors('DateOfSensors', sensors)
     Timer(10, log_sensorsData).start()
-
 log_sensorsData()
-
-def log_devicesData():
-    logger.insert_data_sensors('DateOfDevices', devices)
    
 @app.route('/')
 def connect_interface():
@@ -56,61 +54,17 @@ def set_values():
     for device in devices:
         if(device.name == request.args.get("name")):
             device.value = request.args.get("value")
-            log_devicesData()
+            logger_instance.insert_data_sensors('DateOfDevices', devices)
     LightValue.value = request.args.get("check")
     return json.dumps({'Название:': request.args.get('name'), 'Значение:': request.args.get('value')})
 
 @app.route('/GraphSensors')
 def read_data_sensors():
-    connect('DateOfSensors')
+    lg.connect('DateOfSensors', 'HomeInformation')
 
 @app.route('/GraphDevices')
 def read_data_devices():
-    connect('DateOfDevices')
-
-def connect(name_bd):
-    # Получаем имя датчика из запроса
-    sensor_name = request.args.get("name")
-    print(f'Считываем значение с датчика: {sensor_name}')
-
-    if sensor_name is None:
-        print("Имя датчика не передано в запросе.")
-        return {}
-
-    # Получаем данные из коллекции БД
-    cursor = logger.read_data(name_bd)
-
-    time = []
-    sensor_values = []
-
-    for item in cursor:
-        if 'timeOfRead' in item and sensor_name in item:
-            time_str = item['timeOfRead']
-            time.append(dt.strptime(time_str, '%Y-%m-%d %H:%M:%S').time())
-            sensor_values.append(item[sensor_name])
-        else:
-            print(f"Ключ 'timeOfRead' или датчик '{sensor_name}' отсутствует в документе:", item)
-            return {}
-
-    x = np.array([t.hour + t.minute / 60 for t in time])
-    y = np.array(sensor_values)
-
-    plt.plot(x, y)
-    plt.xticks(rotation=90)
-    plt.ylim(0, 50)
-    plt.xlabel('Время дня')
-    plt.ylabel('Значение')
-
-    current_time = dt.now().time()
-    plt.axvline(x=current_time.hour + current_time.minute / 60, color='r', linestyle='--', label='Текущее время')
-
-    hours = range(0, 25, 1)  # интервал каждый час
-    plt.xticks(hours, [f"{h:02}:00" for h in hours], rotation=90)
-
-    plt.legend()
-    plt.show()
-
-    return {}
+    lg.connect('DateOfDevices', 'HomeInformation')
 
 @app.route('/up')
 def upSensorValue():
