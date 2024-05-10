@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, json
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+from datetime import datetime as dt
 
 from threading import Timer
 import things
@@ -40,10 +41,9 @@ def log_sensorsData():
     logger.insert_data_sensors('DateOfSensors', sensors)
     Timer(10, log_sensorsData).start()
 
-# log_sensorsData()
+log_sensorsData()
 
 def log_devicesData():
-    print("log_devicesData")
     logger.insert_data_sensors('DateOfDevices', devices)
    
 @app.route('/')
@@ -58,37 +58,40 @@ def set_values():
             device.value = request.args.get("value")
             log_devicesData()
     LightValue.value = request.args.get("check")
-    print(request.args.get("check"))
     return json.dumps({'Название:': request.args.get('name'), 'Значение:': request.args.get('value')})
 
 @app.route('/GraphSensors')
 def connect():
     cursor = logger.read_data('DateOfSensors')
-    print(cursor)
     time = []
-    avg_wet = []
+    average_value = []
     for item in cursor:
         if 'timeOfRead' in item:
-            time.append(item['timeOfRead'])
-            avg_wet.append(np.average(list(item.values())[2:]))
+            time_str = item['timeOfRead']
+            time.append(dt.strptime(time_str, '%Y-%m-%d %H:%M:%S').time())
+            average_value.append(np.average(list(item.values())[2:]))
         else:
             print("Ключ 'timeOfRead' отсутствует в документе:", item)
             return {}
 
-    x = np.arange(0, len(time))
-    y = np.array(avg_wet)
+    x = np.array([t.hour + t.minute / 60 for t in time])
+    y = np.array(average_value)
 
     plt.plot(x, y)
     plt.xticks(rotation=90)
     plt.ylim(0, 50)
-    plt.xlim()
-    x = np.arange(len(time), len(time)*2)
-    y_pred = np.poly1d(np.polyfit(x, y, 50))
+    plt.xlabel('Время дня')
+    plt.ylabel('Значение')
+    
+    current_time = dt.now().time()
+    plt.axvline(x=current_time.hour + current_time.minute / 60, color='r', linestyle='--', label='Текущее время')
 
-    plt.plot(x, y_pred(x))
-    plt.xticks(rotation=90)
-    plt.ylim(0, 50)
+    hours = range(0, 25, 1)  # интервал каждый час
+    plt.xticks(hours, [f"{h:02}:00" for h in hours], rotation=90)
+
+    plt.legend()
     plt.show()
+    
     return {}
 
 @app.route('/up')
