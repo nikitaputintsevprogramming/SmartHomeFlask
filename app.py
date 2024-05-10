@@ -60,11 +60,11 @@ def set_values():
 
 @app.route('/GraphSensors')
 def read_data_sensors():
-    lg.connect('DateOfSensors', 'HomeInformation')
+    lg.showGraph('DateOfSensors', 'HomeInformation')
 
 @app.route('/GraphDevices')
 def read_data_devices():
-    lg.connect('DateOfDevices', 'HomeInformation')
+    lg.showGraph('DateOfDevices', 'HomeInformation')
 
 @app.route('/up')
 def upSensorValue():

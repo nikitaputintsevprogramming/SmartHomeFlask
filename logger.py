@@ -21,7 +21,7 @@ class Logger:
         return self.db[nameDB].find(value, field)
 
 class LoggerGraph:
-    def connect(name_collection, name_bd):
+    def showGraph(name_collection, name_bd):
         logger = Logger(name_bd)
 
         # Получаем имя датчика из запроса
