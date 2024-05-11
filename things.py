@@ -17,7 +17,7 @@ class Sensor(Thing):
     def __init__(self, name):
         super().__init__(name)
         self.value = 0
-        print(f' доабвлен датчик {name} со значением {self.value}')
+        print(f' добавлен датчик {name} со значением {self.value}')
 
     def print_name(self):
         super().print_name()

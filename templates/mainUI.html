@@ -10,19 +10,19 @@
 </head>
 <body>
     <div class="container">
-      <h1>Эмулятор умного дома by Раненый солджа</h1>
+      <h1>Умный гараж Казянъ</h1>
       <div class="text-field">
         <label class="text-field__label" for="name">Устройство</label>
-        <input class="text-field__input" type="text" id="name" placeholder='К примеру "MusicPlayer"'>
+        <input class="text-field__input" type="text" id="name" placeholder='К примеру "CarLift"'>
       </div>
 
       <div class="text-field">
         <label class="text-field__label" for="name">Значение</label>
-        <input class="text-field__input" type="text" id="value" placeholder='К примеру "Linkin Park - Mirror"'>
+        <input class="text-field__input" type="text" id="value" placeholder='К примеру "100"'>
       </div>
 
       <div class="switch-field">
-        <label class="text-field__label">Свет</label>
+        <label class="text-field__label">Включить защиту</label>
         <label class="switch">
             <input type="checkbox" id="check">
             <span class="slider round"></span>
@@ -33,10 +33,10 @@
         <button class="custom-btn btn-3" onclick='set_values("/SetValues")'><span>Назначить</span></button>
       </div>
       <div class="send_button">
-        <button class="custom-btn btn-3" onclick='set_values("/GraphSensors")'><span>Показать график выбранного датчика</span></button>
+        <button class="custom-btn btn-3" onclick='set_values("/GraphSensors")'><span>Показать график датчика</span></button>
       </div>
       <div class="send_button">
-        <button class="custom-btn btn-3" onclick='set_values("/GraphDevices")'><span>Показать график выбранного устройства</span></button>
+        <button class="custom-btn btn-3" onclick='set_values("/GraphDevices")'><span>Показать график устройства</span></button>
       </div>
     </div>
 </body>

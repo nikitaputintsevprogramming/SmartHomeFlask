@@ -1,7 +1,7 @@
 /* Общие стили */
 body {
   font-family: Arial, sans-serif;
-  background-image: url('Sprites/bg.jpg');
+  background-image: url('Sprites/garage.jpg');
   background-size: cover; /* Растягиваем изображение на весь экран */
   background-position: center; /* Центрируем изображение по центру экрана */
   margin: 0;
@@ -14,7 +14,7 @@ body {
 
 .container {
   width: 30%; /* Ширина контейнера на 50% от ширины экрана */
-  background-color: rgba(255, 255, 255, 0.8); /* Белый цвет фона с прозрачностью 0.7 */
+  background-color: rgba(138, 138, 255, 0.8); /* Белый цвет фона с прозрачностью 0.7 */
   padding: 50px; /* Добавим немного отступов для контента внутри контейнера */
   border-radius: 10px; /* Закругленные углы на 10px */
 }
@@ -43,7 +43,7 @@ body {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #9ea2c7;
   border-radius: 5px;
 }
 
@@ -68,7 +68,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: #9ea2c7;
   -webkit-transition: .4s;
   transition: .4s;
   border-radius: 34px;
@@ -81,18 +81,18 @@ body {
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: rgb(203, 179, 179);
+  background-color: rgb(116, 119, 162);
   -webkit-transition: .4s;
   transition: .4s;
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #cb6d9c;
+  background-color: #8c6dcb;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #60f321;
+  box-shadow: 0 0 1px #2c21f3;
 }
 
 input:checked + .slider:before {
@@ -104,7 +104,7 @@ input:checked + .slider:before {
 /* Стили для кнопки */
 .custom-btn {
   display: block; /* Изменяем отображение на блочный элемент */
-  background-color: #af4c9e;
+  background-color: #654caf;
   border: none;
   color: white;
   text-align: center; /* Выравниваем текст по центру */
@@ -123,7 +123,7 @@ input:checked + .slider:before {
 
 .custom-btn:after {
   content: "";
-  background: #9d3bae;
+  background: #3b43ae;
   display: block;
   position: absolute;
   z-index: -1;
@@ -138,7 +138,7 @@ input:checked + .slider:before {
 /* Дополнительные стили для кнопки */
 .btn-3 {
   color: #FFFFFF;
-  border: 2px solid #af4ca3;
+  border: 2px solid #4c5eaf;
 }
 
 .btn-3 span {

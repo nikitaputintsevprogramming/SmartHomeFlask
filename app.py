@@ -15,28 +15,22 @@ from logger import LoggerGraph as lg
 app = Flask(__name__)
 
 array_name_sensors = []
-for count in range(12):
+for count in range(10):
     array_name_sensors.append("sensor_"+ str(count))
     sensors.append(things.Sensor(array_name_sensors[count]))
 
 sensorsWet = (sensors[0], sensors[1], sensors[2], sensors[3])
 sensorsTemp = (sensors[4], sensors[5], sensors[6], sensors[7])
-sensorsSmoke = (sensors[8])
+sensorsFire = (sensors[8], sensors[9])
 
 MusicPlayer = things.Device('MusicPlayer', 0)
-LightValue = things.Device('LightValue', False)
+CarLift = things.Device('CarLift', 0)
+LightValue = things.Device('LightValue', 0)
+MainDoor = things.Device('MainDoor', False)
+HollDoor = things.Device('HollDoor', False)
+MonitoringSecurity = things.Device('MonitoringSecurity', False)
 
-KitchenMusicPlayer = things.Device('KitchenMusicPlayer', False)
-BedroomMusicPlayer = things.Device('BedroomMusicPlayer', False)
-HollMusicPlayer = things.Device('HollMusicPlayer', False)
-BathroomMusicPlayer = things.Device('BathroomMusicPlayer', False)
-
-KitchenLightValue = things.Device('KitchenLightValue', False)
-BedroomLightValue = things.Device('BedroomLightValue', False)
-HollLightValue = things.Device('HollLightValue', False)
-BathroomLightValue = things.Device('BathroomLightValue', False)
-
-logger_instance = lg('HomeInformation')
+logger_instance = lg('GarageInformation')
 
 def log_sensorsData():
     logger_instance.insert_data_sensors('DateOfSensors', sensors)
@@ -58,7 +52,7 @@ def set_values():
             else:
                 device.value = request.args.get("value")
             logger_instance.insert_data_sensors('DateOfDevices', devices)
-    LightValue.value = request.args.get("check")
+    MonitoringSecurity.value = request.args.get("check")
     return json.dumps({'Название:': request.args.get('name'), 'Значение:': request.args.get('value')})
 
 @app.route('/GraphSensors')
